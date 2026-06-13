@@ -3,20 +3,68 @@ import pygame
 pygame.init()
 width = 800
 height = 600
+
+player_1_x = 400
+player_1_y = 300
+player_1_radius = 30
+player_1_speed = 5
+
+player_2_x = 400
+player_2_y = 300
+player_2_radius = 30
+player_2_speed = 5
+
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Physics Engine")
 clock = pygame.time.Clock()
 fps = 60
 running = True
-count = 0
+minimum = 500
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    if count == 0:
-        screen.fill((0, 0, 0))
-        pygame.draw.circle(screen, (0, 0, 255), (400, 300), 30)
-        count += 1
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_a]:
+        player_1_x -= player_1_speed
+    if keys[pygame.K_d]:
+        player_1_x += player_1_speed
+    if keys[pygame.K_w]:
+        player_1_y -= player_1_speed
+    if keys[pygame.K_s]:
+        player_1_y += player_1_speed
+    if keys[pygame.K_UP]:
+        player_2_y -= player_2_speed
+    if keys[pygame.K_DOWN]:
+        player_2_y += player_2_speed
+    if keys[pygame.K_LEFT]:
+        player_2_x -= player_2_speed
+    if keys[pygame.K_RIGHT]:
+        player_2_x += player_2_speed
+
+    if player_1_x < player_1_radius:
+        player_1_x = player_1_radius
+    if player_1_x > width - player_1_radius:
+        player_1_x = width - player_1_radius
+    if player_1_y < player_1_radius:
+        player_1_y = player_1_radius
+    if player_1_y > minimum - player_1_radius:
+        player_1_y = minimum - player_1_radius
+
+    if player_2_x < player_2_radius:
+        player_2_x = player_2_radius
+    if player_2_x > width - player_2_radius:
+        player_2_x = width - player_2_radius
+    if player_2_y < player_2_radius:
+        player_2_y = player_2_radius
+    if player_2_y > minimum - player_2_radius:
+        player_2_y = minimum - player_2_radius
+
+    screen.fill((0, 0, 0))
+    pygame.draw.rect(screen, (255, 255, 255), (0, 500, 800, 100))
+    pygame.draw.circle(screen, (0, 0, 255), (int(player_1_x), int(player_1_y)), player_1_radius)
+    pygame.draw.circle(screen, (255, 0, 0), (int(player_2_x), int(player_2_y)), player_2_radius)
     pygame.display.flip()
     clock.tick(fps)
 pygame.quit()
