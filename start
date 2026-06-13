@@ -1,6 +1,7 @@
 import random
 import pygame
 import time
+#Jumping does not work in this iteration.
 pygame.init()
 width = 800
 height = 600
@@ -9,11 +10,18 @@ player_1_x = 400
 player_1_y = 300
 player_1_radius = 30
 player_1_speed = 5
+player_1_velocity = 0
 
 player_2_x = 400
 player_2_y = 300
 player_2_radius = 30
 player_2_speed = 5
+player_2_velocity = 0
+
+ball_y = 200
+ball_velocity = 0
+
+y_coordinates = [ball_y, player_1_y, player_2_y]
 
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption("Physics Engine")
@@ -21,7 +29,7 @@ clock = pygame.time.Clock()
 fps = 60
 running = True
 minimum = 500
-gravity = 2.5
+gravity = 0.5
 distance = 0
 
 new = False
@@ -37,14 +45,12 @@ while running:
         player_1_x -= player_1_speed
     if keys[pygame.K_d]:
         player_1_x += player_1_speed
-    if keys[pygame.K_w]:
-        if player_1_y > minimum - player_1_radius:
-            for i in range(10):
-                player_1_y -= 10
+    if keys[pygame.K_w] and player_1_y >= minimum - player_1_radius:
+        player_1_y_velocity = -12
     if keys[pygame.K_s]:
         player_1_y += player_1_speed
-    if keys[pygame.K_UP]:
-        player_2_y -= player_2_speed
+    if keys[pygame.K_UP] and player_2_y >= minimum - player_2_radius:
+        player_2_y_velocity = -12
     if keys[pygame.K_DOWN]:
         player_2_y += player_2_speed
     if keys[pygame.K_LEFT]:
@@ -53,14 +59,24 @@ while running:
         player_2_x += player_2_speed
     if keys[pygame.K_SPACE]:
         new = True
+
+    player_1_velocity += gravity
+    player_2_velocity += gravity
+    if new:
+        ball_velocity += gravity
+    player_1_y += player_1_velocity
+    player_2_y += player_2_velocity
+    ball_y += ball_velocity
+
     if player_1_x < player_1_radius:
         player_1_x = player_1_radius
     if player_1_x > width - player_1_radius:
         player_1_x = width - player_1_radius
     if player_1_y < player_1_radius:
         player_1_y = player_1_radius
-    if player_1_y > minimum - player_1_radius:
+    if player_1_y >= minimum - player_1_radius:
         player_1_y = minimum - player_1_radius
+        player_1_y_velocity = 0
 
     if player_2_x < player_2_radius:
         player_2_x = player_2_radius
@@ -68,16 +84,22 @@ while running:
         player_2_x = width - player_2_radius
     if player_2_y < player_2_radius:
         player_2_y = player_2_radius
-    if player_2_y > minimum - player_2_radius:
+    if player_2_y >= minimum - player_2_radius:
         player_2_y = minimum - player_2_radius
+        player_2_y_velocity = 0
 
-    player_1_y += gravity
-    player_2_y += gravity
-    if new:
-        pygame.draw.circle(screen, (255, 255, 0), (400, 300), 30)
+
+    if ball_y >= minimum - 30:
+        ball_y = minimum - 30
+        ball_y_velocity = 0
+
+
     pygame.draw.rect(screen, (255, 255, 255), (0, 500, 800, 100))
+    if new:
+        pygame.draw.circle(screen, (255, 255, 0), (400, ball_y), 30)
     pygame.draw.circle(screen, (0, 0, 255), (int(player_1_x), int(player_1_y)), player_1_radius)
     pygame.draw.circle(screen, (255, 0, 0), (int(player_2_x), int(player_2_y)), player_2_radius)
+
     pygame.display.flip()
     clock.tick(fps)
 pygame.quit()
