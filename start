@@ -1,5 +1,6 @@
 import random
 import pygame
+import time
 pygame.init()
 width = 800
 height = 600
@@ -22,18 +23,24 @@ running = True
 minimum = 500
 gravity = 2.5
 distance = 0
+
+new = False
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
     keys = pygame.key.get_pressed()
 
+    screen.fill((0, 0, 0))
+
     if keys[pygame.K_a]:
         player_1_x -= player_1_speed
     if keys[pygame.K_d]:
         player_1_x += player_1_speed
     if keys[pygame.K_w]:
-        player_1_y -= player_1_speed
+        if player_1_y > minimum - player_1_radius:
+            for i in range(10):
+                player_1_y -= 10
     if keys[pygame.K_s]:
         player_1_y += player_1_speed
     if keys[pygame.K_UP]:
@@ -44,7 +51,8 @@ while running:
         player_2_x -= player_2_speed
     if keys[pygame.K_RIGHT]:
         player_2_x += player_2_speed
-
+    if keys[pygame.K_SPACE]:
+        new = True
     if player_1_x < player_1_radius:
         player_1_x = player_1_radius
     if player_1_x > width - player_1_radius:
@@ -65,7 +73,8 @@ while running:
 
     player_1_y += gravity
     player_2_y += gravity
-    screen.fill((0, 0, 0))
+    if new:
+        pygame.draw.circle(screen, (255, 255, 0), (400, 300), 30)
     pygame.draw.rect(screen, (255, 255, 255), (0, 500, 800, 100))
     pygame.draw.circle(screen, (0, 0, 255), (int(player_1_x), int(player_1_y)), player_1_radius)
     pygame.draw.circle(screen, (255, 0, 0), (int(player_2_x), int(player_2_y)), player_2_radius)
