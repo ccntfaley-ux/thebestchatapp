@@ -20,6 +20,8 @@ clock = pygame.time.Clock()
 fps = 60
 running = True
 minimum = 500
+gravity = 2.5
+distance = 0
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -61,6 +63,8 @@ while running:
     if player_2_y > minimum - player_2_radius:
         player_2_y = minimum - player_2_radius
 
+    player_1_y += gravity
+    player_2_y += gravity
     screen.fill((0, 0, 0))
     pygame.draw.rect(screen, (255, 255, 255), (0, 500, 800, 100))
     pygame.draw.circle(screen, (0, 0, 255), (int(player_1_x), int(player_1_y)), player_1_radius)
